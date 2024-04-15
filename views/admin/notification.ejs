@@ -36,6 +36,11 @@
               <br />
             </th>
             <th style="text-align: left;">
+              Nội Dung
+              <br />
+              <br />
+            </th>
+            <th style="text-align: left;">
               Xoá
               <br />
               <br />
@@ -49,11 +54,15 @@
               <p><%= contact.name %></p>
             </td>
             <td>
-              <a href="/detail-notification/<%= contact.id %>">
+              <a href="/detail-notification/<%= contact.id %>" style="pointer-events: none; cursor: default;" >
                 <%= contact.title %>
               </a>
             </td>
             <td><%= contact.ngaygui.getDate() %>/ <%= contact.ngaygui.getMonth()%> / <%= contact.ngaygui.getFullYear() %> </td>
+            <td>
+              <a href="/detail-notification/<%= contact.id %>" style="pointer-events: none; cursor: default;" >
+                <%= contact.note %></a>
+            </td>
                     <td >
               <a href="/delete-contact/<%- contact.id %>"> Xoá </a>
             </td>

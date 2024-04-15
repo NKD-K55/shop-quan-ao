@@ -153,4 +153,33 @@ router.get('/logout', function (req, res, next) {
   }
 })
 
+// const { auth } = require('express-openid-connect');
+
+// const config = {
+//   authRequired: false,
+//   auth0Logout: true,
+//   secret: 'a long, randomly-generated string stored in env',
+//   baseURL: 'http://localhost:3000',
+//   clientID: 'mnOAHQPp2YdyGGpuiSz0nrKt1ntyg1ZN',
+//   issuerBaseURL: 'https://dev-bsm2n3qemnyln632.us.auth0.com'
+// };
+
+// // auth router attaches /login, /logout, and /callback routes to the baseURL
+// router.use(auth(config));
+
+// // req.isAuthenticated is provided from the auth router
+// router.get('/google', (req, res) => {
+//   res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
+// });
+router.get('/auth/facebook',
+  passport.authenticate('facebook', {session: false}));
+
+router.get('/auth/facebook/callback',
+  passport.authenticate('facebook', { failureRedirect: '/login' }),
+  function(req, res) {
+    // Successful authentication, redirect home.
+    req.session.loggin = true;
+    req.session.role = true;
+    res.redirect('/');
+  });
 module.exports = router

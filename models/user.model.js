@@ -7,11 +7,12 @@ var bcrypt = require('bcrypt-nodejs');
 var Schema = mongoose.Schema;
 var schema = new Schema({
   
-    email: {type: String, required: true},
+    email: {type: String, required: true, unique: true},
     password: {type: String, required: true},
     name: {type: String, required: true},
-    role: {type: String, required: true},
-    lock 		: {type: Number, required: false},
+    role: {type: String, required: true, default: "user"},
+    lock 		: {type: Number, required: false, default: 0}, 
+    facebook: {type: JSON, required: true, default: null}
 });
 schema.methods.encryptPassword= function(password){
     return bcrypt.hashSync(password, bcrypt.genSaltSync(5),null);

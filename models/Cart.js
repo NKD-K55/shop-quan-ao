@@ -11,6 +11,7 @@ var Cart = new Schema({
   cart 		: {type: Object, required: false},
   st 		: {type: Number, required: false},
   status 		:  {type: String, required: false, default:"Đang chờ xử lý"},
+  pay : {type:String, required: false, default:"Chưa thanh toán"}, 
   date : {type: Date, required: false},
 
 },{collection : 'cart'});

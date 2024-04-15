@@ -2,7 +2,9 @@
 // load các module
 var passport = require('passport');
 var jwt = require("jsonwebtoken");
-// load  user model
+var FacebookStrategy = require('passport-facebook').Strategy;
+const axios = require('axios');
+const bcrypt = require('bcrypt');
 var User = require('../models/user.model');
 var LocalStrategy = require('passport-local').Strategy;
 
@@ -91,4 +93,75 @@ User.findOne({ 'email': email }, function(err, user) {
   }
 ));
 //local-update
+//oauth-fb
+async function getUserDatas(accessToken) {
+  try {
+    const response = await axios.get('https://graph.facebook.com/v19.0/me?fields=id,name,email', {
+      params: {
+        fields: 'email',
+        access_token: accessToken
+      }
+    });
+    return response.data.email;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+//tạo pass ngẫu nhiên
+async function generateRandomHashedPassword() {
+  try {
+    const randomPassword = Math.random().toString(36).slice(-10);
+    const saltRounds = 10;
+
+    const hashedPassword = await bcrypt.hash(randomPassword, saltRounds);
+  
+    return hashedPassword;
+  } catch (error) {
+    console.error('Failed to generate random hashed password:', error);
+    throw error;
+  }
+}
+
+passport.use(new FacebookStrategy({
+  accessToken: process.env.accessToken,
+  clientID: process.env.FACEBOOK_APP_ID,
+  clientSecret: process.env.FACEBOOK_APP_SECRET,
+  callbackURL: "/auth/facebook/callback",
+  profileFields: ['id', 'displayName']
+  },
+  async function(accessToken, refreshToken, profile, cb) {
+    try{
+      const user_email = await getUserDatas(accessToken);
+      const user_randompass = await generateRandomHashedPassword();
+      User.findOne({ 'email' : user_email},
+        function(err, user){
+          if (err) { return cb(err);}
+  
+          if (!user) {
+            user = new User({
+              email: user_email,
+              // name: profile.username,
+              name: profile.displayName,
+              password: user_randompass,
+              // role: "user",
+              // lock: 0,
+              facebook: profile._json
+            });
+            user.save(function(err) {
+              if (err) console.log(err);
+              return cb(err, user);
+            });
+          } else {
+            return cb(err, user);
+          }
+        });
+    } 
+    catch(error) {
+      console.log(error);
+    }
+  }
+
+));
 

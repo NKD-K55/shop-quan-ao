@@ -11,6 +11,7 @@ var LocalStrategy = require("passport-local");
 var passport = require('passport');
 var flash = require('connect-flash');
 var jwt =require("jsonwebtoken");
+// const { auth } = require('express-openid-connect');
 
 // link router
 var cate = require("./routes/cate.js");
@@ -28,6 +29,16 @@ var contact = require('./routes/contact.js');
 //Link models
 var products = require("./models/products.model");
 
+// const config = {
+//   authRequired: false,
+//   auth0Logout: true,
+//   secret: 'a long, randomly-generated string stored in env',
+//   baseURL: 'http://localhost:3000/login',
+//   clientID: 'UzzzwjWwIE7D4B3HYsMURccSAagx5Gp2',
+//   issuerBaseURL: 'https://dev-bsm2n3qemnyln632.us.auth0.com'
+// };
+
+
 // kết nối database
 var config = require('./config/database.js');
 var mongoose = require('mongoose');
@@ -43,6 +54,9 @@ app.use(session({
 app.use(flash());
 app.use(passport.initialize())
 app.use(passport.session());
+
+// app.use(auth(config))
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
